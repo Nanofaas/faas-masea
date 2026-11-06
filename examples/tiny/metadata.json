@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "instance_id": "instance-63083a28e48e63f9",
+  "suite": "example",
+  "generation": {
+    "generation_seed": 21,
+    "limits": {
+      "Nn": {
+        "min": 10,
+        "max": 10
+      },
+      "Nf": {
+        "min": 1,
+        "max": 1
+      },
+      "neighborhood": {
+        "type": "planar",
+        "degree": 3
+      },
+      "weights": {
+        "alpha": {
+          "min": 1.0,
+          "max": 1.0
+        },
+        "beta_multiplier": {
+          "min": 1.5,
+          "max": 2.0
+        },
+        "gamma": {
+          "min": 0.05,
+          "max": 0.1
+        },
+        "delta_multiplier": {
+          "min": 0.1,
+          "max": 0.2
+        }
+      },
+      "demand": {
+        "values": [
+          1.0
+        ]
+      },
+      "memory_capacity": {
+        "values": [
+          12,
+          12,
+          12,
+          12,
+          12,
+          12,
+          12,
+          12,
+          12,
+          12
+        ]
+      },
+      "memory_requirement": {
+        "values": [
+          2
+        ]
+      },
+      "max_utilization": {
+        "min": 0.7,
+        "max": 0.7
+      },
+      "load": {
+        "trace_type": "clipped",
+        "min": {
+          "min": 2.0,
+          "max": 2.0
+        },
+        "max": {
+          "min": 3.0,
+          "max": 3.0
+        }
+      }
+    },
+    "max_steps": 2,
+    "min_run_time": 0,
+    "max_run_time": 2,
+    "run_time_step": 1,
+    "weight_generation": "paper-delta-mean-v1"
+  },
+  "files": {
+    "base_instance_data.json": "296b73f895d16ff1f1c1aac52125c79395c31cb0d4152b6395857ba5a3cc597e",
+    "load_limits.json": "cb418e6435c17fa5c4491882365afd89c9d25cd266d1b0c2a9d7862b2fde8373",
+    "input_requests_traces.json": "3d6419b73bd97b8282ba05064653d71fa854e1d7be4b91f4fe6c8c205bbb3e50",
+    "graph.json": "66670cc4c8f6ddb9983f61a154567384061e96bc7e6b7f9fb0797aa80a423ba3"
+  }
+}

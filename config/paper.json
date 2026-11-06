@@ -1,0 +1,40 @@
+{
+  "base_solution_folder": "results",
+  "verbose": 0,
+  "seed": 4850,
+  "max_steps": 1,
+  "min_run_time": 0,
+  "max_run_time": 1,
+  "run_time_step": 1,
+  "solver_name": "appsi_highs",
+  "solver_options": {
+    "general": {
+      "use_dp": true,
+      "algorithm_time_limit": 300,
+      "time_limit": 300,
+      "threads": 1,
+      "mip_rel_gap": 1e-06
+    },
+    "auction": {
+      "eta": 0.0,
+      "epsilon": 0.001,
+      "zeta": 0.01,
+      "latency_weight": 0.0,
+      "fairness_weight": 0.0,
+      "unit_bids": true
+    },
+    "pg_r": {
+      "epsilon": 1e-06
+    }
+  },
+  "checkpoint_interval": 1,
+  "max_iterations": 100,
+  "plot_interval": 100,
+  "patience": 10,
+  "sw_patience": 200,
+  "limits": {
+    "instance_type": "materialized",
+    "path": "examples/tiny"
+  },
+  "communication_metrics": true
+}
