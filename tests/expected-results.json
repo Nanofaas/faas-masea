@@ -849,7 +849,7 @@
     "communication": {
       "schema_version": 1,
       "model": "dfaas-logical-batched-v1",
-      "method": "MADEA-one-shot-detailed",
+      "method": "FaaS-MASeA",
       "complete": true,
       "data_messages": 1610,
       "control_messages": 0,
@@ -1708,7 +1708,7 @@
     "communication": {
       "schema_version": 1,
       "model": "dfaas-logical-batched-v1",
-      "method": "MADEA-one-shot-selective",
+      "method": "FaaS-MASeA(r)",
       "complete": true,
       "data_messages": 558,
       "control_messages": 0,
@@ -2567,7 +2567,7 @@
     "communication": {
       "schema_version": 1,
       "model": "dfaas-logical-batched-v1",
-      "method": "FaaS-MAPG-R-detailed-fixed-x",
+      "method": "PG",
       "complete": true,
       "data_messages": 497,
       "control_messages": 70,

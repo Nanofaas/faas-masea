@@ -1,4 +1,3 @@
-from fwd_analysis import main as run_fwd_analysis
 from utils.common import (
   delete_tuples,
   float_to_int,

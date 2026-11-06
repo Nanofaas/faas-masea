@@ -14,7 +14,44 @@ import pyomo.environ as pyo
 
 from models import sp as sp_models
 from utils import step_time
-from plasma.core.sbm import minimize_replica_costs
+
+def minimize_replica_costs(costs, memory, ram_cap: float) -> np.ndarray:
+  """Local multi-choice knapsack; costs[f][r] may be +inf to forbid a level."""
+  ram_req = np.rint(memory).astype(int)
+  budget = int(np.floor(ram_cap + 1e-9))
+  if not np.allclose(memory, ram_req, atol=1e-9) or (ram_req <= 0).any():
+    raise ValueError(
+      "Replica allocation requires positive integer memory requirements"
+    )
+  # gcd scaling: states are multiples of gcd(ram_req); exactness preserved
+  scale = int(np.gcd.reduce(ram_req))
+  ram_req = ram_req // scale
+  budget = budget // scale
+  Nf = len(costs)
+  INF = np.inf
+  best = np.full(budget + 1, 0.0)  # value of best partial assignment
+  choice = np.zeros((Nf, budget + 1), dtype=int)
+  for f in range(Nf):
+    values = costs[f]
+    new_best = np.full(budget + 1, INF)
+    for b in range(budget + 1):
+      k_hi = min(len(values) - 1, b // ram_req[f])
+      for k in range(k_hi + 1):
+        cand = best[b - k * ram_req[f]] + values[k]
+        if cand < new_best[b]:
+          new_best[b] = cand
+          choice[f, b] = k
+    best = new_best
+  # backtrack from the best final budget
+  if not np.isfinite(best).any():
+    raise ValueError("No feasible local replica allocation")
+  b = int(np.argmin(best))
+  r = np.zeros(Nf, dtype=int)
+  for f in range(Nf - 1, -1, -1):
+    r[f] = choice[f, b]
+    b -= r[f] * ram_req[f]
+  return r
+
 
 _SUPPORTED = {
   sp_models.LSP, sp_models.LSP_detailed, sp_models.LSP_v0, sp_models.LSP_fixedr,

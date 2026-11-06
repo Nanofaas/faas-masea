@@ -1,4 +1,4 @@
-"""Regression against the archived implementation, including decisions and messages."""
+"""Regression checks for decisions, objectives and logical messages."""
 from copy import deepcopy
 import json
 from pathlib import Path
@@ -29,8 +29,8 @@ def test_only_paper_methods_are_selectable():
 
 @pytest.mark.parametrize('name', list(DECENTRALIZED))
 @pytest.mark.parametrize('workers', [0, 2])
-def test_decisions_objectives_and_messages_match_upstream(name, workers, tmp_path):
-  reference = json.loads((ROOT/'tests/upstream-reference.json').read_text())[name]
+def test_decisions_objectives_and_messages_match_expected_results(name, workers, tmp_path):
+  reference = json.loads((ROOT/'tests/expected-results.json').read_text())[name]
   config = json.loads((ROOT/'config/paper.json').read_text())
   source = ROOT/'examples/tiny'
   config.update(base_solution_folder=str(tmp_path), max_steps=2, max_run_time=2, pg_diagnostics=True)
@@ -60,8 +60,8 @@ def test_decisions_objectives_and_messages_match_upstream(name, workers, tmp_pat
 
 
 @pytest.mark.parametrize('name', list(methods.CENTRALIZED))
-def test_centralized_references_match_upstream(name):
-  reference = json.loads((ROOT/'tests/upstream-reference.json').read_text())[name]
+def test_centralized_references_match_expected_results(name):
+  reference = json.loads((ROOT/'tests/expected-results.json').read_text())[name]
   row = solve(ROOT/'examples/tiny',30,threads=1,gap=1e-6,**methods.CENTRALIZED[name])
   assert row['status'] == reference['status'] == 'ok'
   assert row['feasible']
@@ -104,5 +104,22 @@ def test_centralized_cli_records_reference_status(name, tmp_path):
   assert result['algorithm'] == name
   assert result['status'] == 'ok'
   assert result['details']['feasible']
-  expected = json.loads((ROOT/'tests/upstream-reference.json').read_text())[name]['welfare']
+  expected = json.loads((ROOT/'tests/expected-results.json').read_text())[name]['welfare']
   assert result['welfare'] == pytest.approx([expected], abs=1e-10)
+
+
+def test_replica_allocation_matches_exhaustive_search():
+  from itertools import product
+  from models.dp_solver import minimize_replica_costs
+  costs = [[0., -2., -3.], [0., -4., -5.]]
+  memory = np.array([2, 3])
+  for budget in range(9):
+    result = minimize_replica_costs(costs, memory, budget)
+    feasible = [r for r in product(range(3), repeat=2) if np.dot(r, memory) <= budget]
+    optimum = min(sum(costs[f][r[f]] for f in range(2)) for r in feasible)
+    assert np.dot(result, memory) <= budget
+    assert sum(costs[f][result[f]] for f in range(2)) == optimum
+  with pytest.raises(ValueError, match='positive integer'):
+    minimize_replica_costs(costs, np.array([0, 3]), 6)
+  with pytest.raises(ValueError, match='No feasible'):
+    minimize_replica_costs([[float('inf'), 0.]], np.array([2]), 1)
